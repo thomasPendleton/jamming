@@ -1,4 +1,4 @@
-const redirectURI = 'http://localhost:3000/'
+const redirectURI = 'https://tomp_jamming_app.surge.sh'
 const clientId = '197f037c9c744fd6a9029129096fd0ce'
 let accessToken
 
