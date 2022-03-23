@@ -3,47 +3,16 @@ import React from 'react'
 import { SearchBar } from '../searchbar/searchbar'
 import { PlayList } from '../playlist/playlist'
 import { SearchResults } from '../searchresults/searchresults'
+import Spotify from '../../util/spotify'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      searchResults: [
-        {
-          name: 'name1',
-          artist: 'artist1',
-          album: 'album1',
-          id: 1,
-        },
-        {
-          name: 'name2',
-          artist: 'artist2',
-          album: 'album2',
-          id: 2,
-        },
-        {
-          name: 'name3',
-          artist: 'artist3',
-          album: 'album3',
-          id: 3,
-        },
-      ],
+      searchResults: [],
       playlistName: 'My playlist',
-      playlistTracks: [
-        {
-          name: 'playlist one',
-          artist: 'playlist artist one',
-          album: 'playlist album one',
-          id: 4,
-        },
-        {
-          name: 'playlist two',
-          artist: 'playlist artist two',
-          album: 'playlist album two',
-          id: 5,
-        },
-      ],
+      playlistTracks: [],
     }
     this.addTrack = this.addTrack.bind(this)
     this.removeTrack = this.removeTrack.bind(this)
@@ -58,6 +27,7 @@ class App extends React.Component {
       return
     }
     tracks.push(track)
+    console.log(tracks)
     this.setState({ playlistTracks: tracks })
   }
 
@@ -72,12 +42,17 @@ class App extends React.Component {
   }
 
   savePlaylist() {
-    const trackURIs = this.state.playlistTracks.map((track) => track.uri)
+    const trackURIs = this.state.playlistTracks.map((track) => track.URI)
     console.log(trackURIs)
+    Spotify.savePlaylist(this.state.playlistName, trackURIs).then(() => {
+      this.setState({ playlistName: 'New Playlist', playlistTracks: [] })
+    })
   }
 
   search(input) {
-    console.log(input)
+    Spotify.search(input).then((results) =>
+      this.setState({ searchResults: results })
+    )
   }
 
   render() {
@@ -87,7 +62,7 @@ class App extends React.Component {
           Ja<span className="highlight">mmm</span>ing
         </h1>
         <div className="App">
-          <SearchBar onSearch={this.search}/>
+          <SearchBar onSearch={this.search} />
           <div className="App-playlist">
             <SearchResults
               searchResults={this.state.searchResults}
